@@ -1,0 +1,11 @@
+[Unit]
+Description=qt-vec-api
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/opt/qt-vec-api/bin/qt-vec-api
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

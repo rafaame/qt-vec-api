@@ -1,0 +1,3 @@
+[submodule "vec-common"]
+	path = vec-common
+	url = git@github.com:rafaame/vec-common.git
