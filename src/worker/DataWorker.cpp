@@ -25,6 +25,7 @@ void DataWorkerThread::run() {
 DataWorker::DataWorker(UpdateHandler *updateHandler, DataHandler *dataHandler, QObject *parent) : QObject(parent) {
     this->dataHandler = dataHandler;
 
+    qRegisterMetaType<DataPacket>("DataPacket");
     QObject::connect(updateHandler, &UpdateHandler::preparingUpdate, this, &DataWorker::prepareForUpdate, Qt::DirectConnection);
     QObject::connect(updateHandler, &UpdateHandler::updateFinished, this, &DataWorker::onUpdateFinished, Qt::DirectConnection);
 }
@@ -60,12 +61,9 @@ void DataWorker::run(DataWorkerThread *thread) {
 void DataWorker::iterate() {
     DataPacket *packet = dataHandler->readData();
     if (packet) {
-    	qDebug() << "Packet on";
     	emit dataUpdated(*packet);
     	delete packet;
-    	QThread::msleep(500);
     } else {
-    	qDebug() << "Packet off";
     	QThread::msleep(500);
     }
 }
