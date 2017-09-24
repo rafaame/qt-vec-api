@@ -10,6 +10,7 @@
 #include "DataWorker.h"
 #include "CommandWorker.h"
 #include "ModuleHandler.h"
+#include "ManagementModule.h"
 #include "UpdateModule.h"
 #include "DataModule.h"
 #include "ComfortModule.h"
@@ -46,6 +47,7 @@ int main(int argc, char *argv[]) {
 	commandWorkerThread.start();
 
 	ModuleHandler moduleHandler(&updateHandler, &dataWorker, &commandWorker);
+	moduleHandler.registerModule("management", new ManagementModule(&arduinoHandler));
 	moduleHandler.registerModule("update", new UpdateModule(&updateHandler));
 	moduleHandler.registerModule("data", new DataModule());
 	moduleHandler.registerModule("comfort", new ComfortModule());
