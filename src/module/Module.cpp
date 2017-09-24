@@ -28,18 +28,21 @@ void Module::registerAction(QString name, function<bool(QHttpRequest *, RequestP
 }
 
 bool Module::dispatch(QHttpRequest *request, RequestPacket *requestPacket, QHttpResponse *response) {
-	if (! actions.contains(QString(requestPacket->action.c_str()))) {
-		return false;
+	QString error;
+	bool closeConnection;
+	if (actions.contains(QString(requestPacket->action.c_str()))) {
+		closeConnection = actions[QString(requestPacket->action.c_str())](request, requestPacket, response, &error);
+	} else {
+		closeConnection = true;
+		error = QString("Invalid action '") + QString(requestPacket->action.c_str()) + "'";
 	}
 
-	QString error;
-	bool success = actions[QString(requestPacket->action.c_str())](request, requestPacket, response, &error);
-
+	bool success = ! error.length();
 	QJsonObject responseBody = buildResponse(success, error);
 	response->setStatusCode(success ? ESTATUS_OK : ESTATUS_INTERNAL_SERVER_ERROR);
 	response->write(QJsonDocument(responseBody).toJson());
 
-	return success;
+	return true;
 }
 
 void Module::receiveData(DataPacket *dataPacket) {
